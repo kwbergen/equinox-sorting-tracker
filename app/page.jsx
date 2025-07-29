@@ -1,7 +1,10 @@
 'use client';
 import { useState } from 'react';
 
-export default function Page() {
+// ✅ Your actual Web App URL is inserted below:
+const endpoint = "https://script.google.com/a/macros/bergenlogistics.com/s/AKfycbyrlZzzUFhQPctfYZMgZaEFnFD-2u-xSoW-orK5IfXVgBObUwK9X5lZDfOre56QXgLO2A/exec";
+
+export default function Home() {
   const [form, setForm] = useState({
     name: '',
     startTime: '',
@@ -28,15 +31,26 @@ export default function Page() {
     setForm(updatedForm);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    alert(`Submitted:\nName: ${form.name}\nStart: ${form.startTime}\nEnd: ${form.endTime}\nTotal: ${form.totalHours}`);
-    setForm({ name: '', startTime: '', endTime: '', totalHours: '' });
+
+    try {
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      alert('Submitted!');
+      setForm({ name: '', startTime: '', endTime: '', totalHours: '' });
+    } catch (error) {
+      alert('Error submitting form. Please try again.');
+    }
   }
 
   return (
     <main style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Equinox Retail Replenishment Sorting</h1>
+      <h1>Equinox Sorting Tracker</h1>
       <form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
         <label>Name:<br />
           <input type="text" name="name" value={form.name} onChange={handleChange} required />
@@ -55,3 +69,4 @@ export default function Page() {
     </main>
   );
 }
+
