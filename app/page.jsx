@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
 
-// ✅ Your actual Web App URL is inserted below:
-const endpoint = "https://script.google.com/a/macros/bergenlogistics.com/s/AKfycbyrlZzzUFhQPctfYZMgZaEFnFD-2u-xSoW-orK5IfXVgBObUwK9X5lZDfOre56QXgLO2A/exec";
+import React, { useState } from 'react';
 
 export default function Home() {
   const [form, setForm] = useState({
@@ -12,12 +10,18 @@ export default function Home() {
     totalHours: '',
   });
 
+  const endpoint = "https://script.google.com/a/macros/bergenlogistics.com/s/AKfycbyrlZzzUFhQPctfYZMgZaEFnFD-2u-xSoW-orK5IfXVgBObUwK9X5lZDfOre56QXgLO2A/exec";
+
   function calculateHours(start, end) {
     if (!start || !end) return '';
-    const startDate = new Date(`1970-01-01T${start}`);
-    const endDate = new Date(`1970-01-01T${end}`);
-    const diff = (endDate - startDate) / (1000 * 60 * 60); // convert ms to hours
-    return diff > 0 ? diff.toFixed(2) : '';
+    const [startHours, startMinutes] = start.split(':').map(Number);
+    const [endHours, endMinutes] = end.split(':').map(Number);
+
+    const startTotalMinutes = startHours * 60 + startMinutes;
+    const endTotalMinutes = endHours * 60 + endMinutes;
+
+    const diff = endTotalMinutes - startTotalMinutes;
+    return (diff > 0 ? (diff / 60).toFixed(2) : '');
   }
 
   function handleChange(e) {
@@ -32,41 +36,4 @@ export default function Home() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-
-    try {
-      await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-
-      alert('Submitted!');
-      setForm({ name: '', startTime: '', endTime: '', totalHours: '' });
-    } catch (error) {
-      alert('Error submitting form. Please try again.');
-    }
-  }
-
-  return (
-    <main style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Equinox Sorting Tracker</h1>
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
-        <label>Name:<br />
-          <input type="text" name="name" value={form.name} onChange={handleChange} required />
-        </label><br /><br />
-        <label>Start Time:<br />
-          <input type="time" name="startTime" value={form.startTime} onChange={handleChange} required />
-        </label><br /><br />
-        <label>End Time:<br />
-          <input type="time" name="endTime" value={form.endTime} onChange={handleChange} required />
-        </label><br /><br />
-        <label>Total Hours:<br />
-          <input type="text" name="totalHours" value={form.totalHours} readOnly />
-        </label><br /><br />
-        <button type="submit">Submit</button>
-      </form>
-    </main>
-  );
-}
-
+    e.preventDefault
